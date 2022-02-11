@@ -19,7 +19,7 @@ elem.click()
 time.sleep(1)
 
 
-with open('words2.txt', 'r') as f:
+with open('words.txt', 'r') as f:
     wordList = f.read().split()
 
 elem.send_keys('CRANE')
@@ -75,28 +75,65 @@ print(matches)
 for index in range(len(wordList)):
     if absent[0] in wordList[index] or absent[1] in wordList[index] or absent[2] in wordList[index] or absent[3] in wordList[index] or absent[4] in wordList[index]:
         wordList[index] = ''
+ 
+numNear = 5
 
-if nearmatches[0] == '/':
-    
-    elif nearmatches[1] == '/':
-            
-        elif nearmatches[2] == '/':
+if nearmatches[4] == '/':
+    numNear = 4
 
-            elif nearmatches[3] == '/':
+if nearmatches[3] == '/':
+    numNear = 3
 
-                elif nearmatches[4] == '/':
+if nearmatches[2] == '/':
+    numNear = 2
+
+if nearmatches[1] == '/':
+    numNear = 1
+
+
+print(numNear)
 
 for index in range(len(wordList)):
-    
+    if numNear == 5:
+        if nearmatches[0] not in wordList[index] or nearmatches[1] not in wordList[index] or nearmatches[2] not in wordList[index] or nearmatches[3] not in wordList[index] or nearmatches[4] not in wordList[index]:
+            wordList[index] = ''
+
+    if numNear == 4:
+        if nearmatches[0] not in wordList[index] or nearmatches[1] not in wordList[index] or nearmatches[2] not in wordList[index] or nearmatches[3] not in wordList[index]:
+            wordList[index] = ''
+
+    if numNear == 3:
+        if nearmatches[0] not in wordList[index] or nearmatches[1] not in wordList[index] or nearmatches[2] not in wordList[index]:
+            wordList[index] = ''
+
+    if numNear == 2:
+        if nearmatches[0] not in wordList[index] or nearmatches[1] not in wordList[index]:
+            wordList[index] = ''
+
+    if numNear == 1:
+        if nearmatches[0] not in wordList[index]:
+            wordList[index] = ''
 
             
         
 
-
-
 print(wordList)
 
+wordList2 = filter(None,wordList)
 
+nextGuess = False
+doubleLetter = False
 
+nextGuess2 = '/'
 
+for i in wordList2:
+    doubleLetter = False
+    for letters in range(5):
+        if i.count(i[letters]) > 1:
+            doubleLetter = True
+        if letters == 4 and doubleLetter == False and nextGuess == False:
+            nextGuess2 = i
+            nextGuess = True
+        
 
+print(nextGuess2)
