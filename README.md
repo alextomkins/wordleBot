@@ -1,6 +1,9 @@
 # wordle
 Python bot that utilises Selenium to guess the daily Wordle puzzle.
 
+</img>
+<img src = "wordle.gif", alt = "wordle", height = "720">
+
 This program accesses the Wordle website and enters guesses until the answer is found, or it fails.
 
 The logic behind the bot is based around the idea of eliminating words from a list until only the correct answer remains. The first guess 'salet' was chosen based on the findings of 3Blue1Brown in their Wordle project (https://github.com/3b1b/videos/tree/master/_2022/wordle). The words.txt list of possible guesses was also lifted from this project.
