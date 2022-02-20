@@ -5,85 +5,85 @@ import time
 import re
 
 def main():
-	setup()
-	
-	#Solve next 5 guesses
-	for i in range(5):
-		returnClues()
-		removeAbsent()
-		removeNear()
-		removeMatches()
-		method()
-	
+    setup()
+
+    #Solve next 5 guesses
+    for i in range(5):
+        returnClues()
+        removeAbsent()
+        removeNear()
+        removeMatches()
+        method()
+
 def setup():
-        global driver
-        global elem
-        global wordList
+    global driver
+    global elem
+    global wordList
 
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        
-        driver = webdriver.Chrome(options=options)
-        url = 'https://www.powerlanguage.co.uk/wordle/'
-        driver.get(url)
-        
-        time.sleep(1)
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-        elem = driver.find_element_by_tag_name('html')
+    driver = webdriver.Chrome(options=options)
+    url = 'https://www.powerlanguage.co.uk/wordle/'
+    driver.get(url)
 
-        elem.click()
+    time.sleep(1)
 
-        time.sleep(1)
+    elem = driver.find_element_by_tag_name('html')
+
+    elem.click()
+
+    time.sleep(1)
 
 
-        with open('words.txt', 'r') as f:
-                wordList = f.read().split()
+    with open('words.txt', 'r') as f:
+        wordList = f.read().split()
 
-        wordGuess('SALET')
+    wordGuess('SALET')
 
 def wordGuess(wordToGuess):
-	elem.send_keys(wordToGuess)
-	elem.send_keys(Keys.ENTER)
+    elem.send_keys(wordToGuess)
+    elem.send_keys(Keys.ENTER)
 
 def returnClues():
-        global matches
-        global nearmatches
-        global absent
-        
-        host = driver.find_element_by_tag_name("game-app")
-        game = driver.execute_script("return arguments[0].shadowRoot.getElementById('game')", host)
-        keyboard = game.find_element_by_tag_name("game-keyboard")
-        keys = driver.execute_script("return arguments[0].shadowRoot.getElementById('keyboard')", keyboard)
-        time.sleep(2)
-        keydata = driver.execute_script("return arguments[0].innerHTML;",keys)
+    global matches
+    global nearmatches
+    global absent
 
-        correctRegex = re.compile('...............correct', re.VERBOSE)
+    host = driver.find_element_by_tag_name("game-app")
+    game = driver.execute_script("return arguments[0].shadowRoot.getElementById('game')", host)
+    keyboard = game.find_element_by_tag_name("game-keyboard")
+    keys = driver.execute_script("return arguments[0].shadowRoot.getElementById('keyboard')", keyboard)
+    time.sleep(2)
+    keydata = driver.execute_script("return arguments[0].innerHTML;",keys)
 
-        matches = ['/', '/', '/', '/', '/']
-        n = 0
-        for groups in correctRegex.findall(keydata):
-                matches[n] = (groups[0])
-                n = n + 1
+    correctRegex = re.compile('...............correct', re.VERBOSE)
 
-
-
-        presentRegex = re.compile('...............present', re.VERBOSE)
-
-        nearmatches = ['/', '/', '/', '/', '/']
-        n = 0
-        for groups in presentRegex.findall(keydata):
-                nearmatches[n] = (groups[0])
-                n = n + 1
+    matches = ['/', '/', '/', '/', '/']
+    n = 0
+    for groups in correctRegex.findall(keydata):
+        matches[n] = (groups[0])
+        n = n + 1
 
 
-        absentRegex = re.compile('...............absent', re.VERBOSE)
 
-        absent = ['/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/']
+    presentRegex = re.compile('...............present', re.VERBOSE)
 
-        n = 0
-        for groups in absentRegex.findall(keydata):
-                absent[n] = (groups[0])
-                n = n + 1
+    nearmatches = ['/', '/', '/', '/', '/']
+    n = 0
+    for groups in presentRegex.findall(keydata):
+        nearmatches[n] = (groups[0])
+        n = n + 1
+
+
+    absentRegex = re.compile('...............absent', re.VERBOSE)
+
+    absent = ['/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/']
+
+    n = 0
+    for groups in absentRegex.findall(keydata):
+        absent[n] = (groups[0])
+        n = n + 1
 
 def removeAbsent():
     for index in range(len(wordList)):
@@ -169,7 +169,7 @@ def removeMatches():
 def method():
     global wordList
     global numMatch
-    
+
     wordList = list(filter(None,wordList))
 
     nextGuess = False
@@ -192,7 +192,7 @@ def method():
     wordGuess(nextGuess2)
 
     if numMatch != 5:
-            wordList.remove(nextGuess2)
+        wordList.remove(nextGuess2)
 
 if __name__ == "__main__":
     main()
