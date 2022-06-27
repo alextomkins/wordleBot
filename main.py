@@ -7,24 +7,31 @@ import re
 def main():
     setup()
 
+    returnClues()
+
+    k=input("press close to exit") 
+
     #Solve next 5 guesses
-    for i in range(5):
-        returnClues()
-        removeAbsent()
-        removeNear()
-        removeMatches()
-        method()
+    #for i in range(5):
+    #    returnClues()
+    #    removeAbsent()
+    #    removeNear()
+    #    removeMatches()
+    #    method()
 
 def setup():
     global driver
     global elem
     global wordList
+    global guessNumber
+
+    guessNumber = 1
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     driver = webdriver.Chrome(options=options)
-    url = 'https://www.powerlanguage.co.uk/wordle/'
+    url = 'https://www.nytimes.com/games/wordle/index.html'
     driver.get(url)
 
     time.sleep(1)
@@ -41,49 +48,32 @@ def setup():
 
     wordGuess('SALET')
 
+
+
 def wordGuess(wordToGuess):
     elem.send_keys(wordToGuess)
     elem.send_keys(Keys.ENTER)
 
 def returnClues():
-    global matches
-    global nearmatches
-    global absent
-
-    host = driver.find_element_by_tag_name("game-app")
-    game = driver.execute_script("return arguments[0].shadowRoot.getElementById('game')", host)
-    keyboard = game.find_element_by_tag_name("game-keyboard")
-    keys = driver.execute_script("return arguments[0].shadowRoot.getElementById('keyboard')", keyboard)
+    global guessNumber
+    
     time.sleep(2)
-    keydata = driver.execute_script("return arguments[0].innerHTML;",keys)
 
-    correctRegex = re.compile('...............correct', re.VERBOSE)
+    letterList = []
+    attributeList = []
 
-    matches = ['/', '/', '/', '/', '/']
-    n = 0
-    for groups in correctRegex.findall(keydata):
-        matches[n] = (groups[0])
-        n = n + 1
+    for i in range(5):
+        letter = driver.find_element_by_xpath(f'/html/body/div/div[1]/div/div[{guessNumber}]/div[{i+1}]/div') 
+        attribute = driver.find_element_by_xpath(f'/html/body/div/div[1]/div/div[1]/div[{i+1}]/div').get_attribute("data-state");
 
+        letterList.append(letter.text)
+        attributeList.append(attribute)
 
+    print(letterList)
+    print(attributeList)
 
-    presentRegex = re.compile('...............present', re.VERBOSE)
+    guessNumber = guessNumber + 1
 
-    nearmatches = ['/', '/', '/', '/', '/']
-    n = 0
-    for groups in presentRegex.findall(keydata):
-        nearmatches[n] = (groups[0])
-        n = n + 1
-
-
-    absentRegex = re.compile('...............absent', re.VERBOSE)
-
-    absent = ['/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/','/', '/', '/', '/', '/']
-
-    n = 0
-    for groups in absentRegex.findall(keydata):
-        absent[n] = (groups[0])
-        n = n + 1
 
 def removeAbsent():
     for index in range(len(wordList)):
