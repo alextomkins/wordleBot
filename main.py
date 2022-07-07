@@ -1,13 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 import time
 
 def setup():
     global driver
     global elem
     global wordList
-    global guessNumber
 
     guessNumber = 1
 
@@ -20,7 +20,7 @@ def setup():
 
     time.sleep(1)
 
-    elem = driver.find_element_by_tag_name('html')
+    elem = driver.find_element(By.TAG_NAME, 'html')
 
     elem.click()
 
@@ -30,7 +30,8 @@ def setup():
     with open('words.txt', 'r') as f:
         wordList = f.read().split()
 
-    wordGuess('moons', guessNumber)
+    wordGuess('salet', guessNumber)
+
 
 
 def wordGuess(wordToGuess, guessNumber):
@@ -45,14 +46,14 @@ def returnClues(guessNumber):
     attributeList = []
 
     for i in range(5):
-        letter = driver.find_element_by_xpath(f'/html/body/div/div[1]/div/div[{guessNumber}]/div[{i+1}]/div') 
-        attribute = driver.find_element_by_xpath(f'/html/body/div/div[1]/div/div[{guessNumber}]/div[{i+1}]/div').get_attribute("data-state");
+        letter = driver.find_element(By.XPATH, f'/html/body/div/div[1]/div/div[{guessNumber}]/div[{i+1}]/div') 
+        attribute = driver.find_element(By.XPATH, f'/html/body/div/div[1]/div/div[{guessNumber}]/div[{i+1}]/div').get_attribute("data-state");
 
         letterList.append(letter.text)
         attributeList.append(attribute)
 
-    print(letterList)
-    print(attributeList)
+    ##print(letterList)
+    ##print(attributeList)
 
     guessNumber += 1
 
@@ -74,7 +75,7 @@ def reduceWordList(letterList, attributeList, guessNumber):
         if len(indicies[i]) > 1:
             for k in range(len(indicies[i])):
                 multiAttributes.append(attributeList[indicies[i][k]])
-                print(multiAttributes)
+                ##print(multiAttributes)
 
             if multiAttributes.count('absent') == len(multiAttributes):
                 index = 0
@@ -113,16 +114,80 @@ def reduceWordList(letterList, attributeList, guessNumber):
                     index += 1
 
             if 'absent' in multiAttributes and 'present' in multiAttributes and 'correct' in multiAttributes:
-                pass
+                index = 0
+                while(True):
+                    if wordList[index].count(letterList[i]) != (multiAttributes.count('correct') + multiAttributes.count('present')):
+                        del wordList[index]
+                        index -=1
+                    
+                    if (attributeList[i] == 'absent' or attributeList[i] == 'present') and letterList[i].lower() == wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+                    
+                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                        del wordList[index]
+                        index -=1
 
-            if 'absent' in multiAttributes and 'present' in multiAttributes:
-                pass
+                    if index >= len(wordList) - 1:
+                        break
 
-            if 'absent' in multiAttributes and 'correct' in multiAttributes:
-                pass
+                    index += 1
 
-            if 'present' in multiAttributes and 'correct' in multiAttributes:
-                pass
+            if 'absent' in multiAttributes and 'present' in multiAttributes and 'correct' not in multiAttributes:
+                index = 0
+                while(True):
+                    if wordList[index].count(letterList[i]) != multiAttributes.count('present'):
+                        del wordList[index]
+                        index -=1
+                    
+                    if (attributeList[i] == 'absent' or attributeList[i] == 'present') and letterList[i].lower() == wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+
+                    if index >= len(wordList) - 1:
+                        break
+
+                    index += 1
+
+            if 'absent' in multiAttributes and 'correct' in multiAttributes and 'present' not in multiAttributes:
+                index = 0
+                while(True):
+                    if wordList[index].count(letterList[i]) != multiAttributes.count('correct'):
+                        del wordList[index]
+                        index -=1
+                    
+                    if attributeList[i] == 'absent' and letterList[i].lower() == wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+                    
+                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+
+                    if index >= len(wordList) - 1:
+                        break
+
+                    index += 1
+
+            if 'present' in multiAttributes and 'correct' in multiAttributes and 'absent' not in multiAttributes:
+                index = 0
+                while(True):
+                    if wordList[index].count(letterList[i]) < (multiAttributes.count('correct') + multiAttributes.count('present')):
+                        del wordList[index]
+                        index -=1
+                    
+                    if attributeList[i] == 'present' and letterList[i].lower() == wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+                    
+                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                        del wordList[index]
+                        index -=1
+
+                    if index >= len(wordList) - 1:
+                        break
+
+                    index += 1
 
         else:
             if attributeList[i] == 'absent':
@@ -165,5 +230,5 @@ def reduceWordList(letterList, attributeList, guessNumber):
 
 if __name__ == "__main__":
     setup()
-
+    
     print(wordList)
