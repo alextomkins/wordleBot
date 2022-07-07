@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 
@@ -32,8 +31,6 @@ def setup():
 
     wordGuess('salet', guessNumber)
 
-
-
 def wordGuess(wordToGuess, guessNumber):
     elem.send_keys(wordToGuess)
     elem.send_keys(Keys.ENTER)
@@ -62,6 +59,24 @@ def returnClues(guessNumber):
     else:
         reduceWordList(letterList, attributeList, guessNumber)
 
+
+def correctNumberOfMultiple(index, letterList, multiAttributes, i):
+    if wordList[index].count(letterList[i]) != (multiAttributes.count('correct') + multiAttributes.count('present')):
+        return True
+    
+    return False
+
+def absentOrPresentMultiple(index, letterList, attributeList, i):
+    if (attributeList[i] == 'absent' or attributeList[i] == 'present') and letterList[i].lower() == wordList[index][i]:
+        return True
+
+    return False
+
+def isCorrect(index, letterList, attributeList, i):
+    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+        return True
+    
+    return False
 
 def reduceWordList(letterList, attributeList, guessNumber):
     indicies = []
@@ -116,15 +131,7 @@ def reduceWordList(letterList, attributeList, guessNumber):
             if 'absent' in multiAttributes and 'present' in multiAttributes and 'correct' in multiAttributes:
                 index = 0
                 while(True):
-                    if wordList[index].count(letterList[i]) != (multiAttributes.count('correct') + multiAttributes.count('present')):
-                        del wordList[index]
-                        index -=1
-                    
-                    if (attributeList[i] == 'absent' or attributeList[i] == 'present') and letterList[i].lower() == wordList[index][i]:
-                        del wordList[index]
-                        index -=1
-                    
-                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                    if correctNumberOfMultiple(index, letterList, multiAttributes, i) and absentOrPresentMultiple(index, letterList, attributeList, i) and isCorrect(index, letterList, attributeList, i):
                         del wordList[index]
                         index -=1
 
@@ -136,11 +143,7 @@ def reduceWordList(letterList, attributeList, guessNumber):
             if 'absent' in multiAttributes and 'present' in multiAttributes and 'correct' not in multiAttributes:
                 index = 0
                 while(True):
-                    if wordList[index].count(letterList[i]) != multiAttributes.count('present'):
-                        del wordList[index]
-                        index -=1
-                    
-                    if (attributeList[i] == 'absent' or attributeList[i] == 'present') and letterList[i].lower() == wordList[index][i]:
+                    if correctNumberOfMultiple(index, letterList, multiAttributes, i) and absentOrPresentMultiple(index, letterList, attributeList, i):
                         del wordList[index]
                         index -=1
 
@@ -152,15 +155,7 @@ def reduceWordList(letterList, attributeList, guessNumber):
             if 'absent' in multiAttributes and 'correct' in multiAttributes and 'present' not in multiAttributes:
                 index = 0
                 while(True):
-                    if wordList[index].count(letterList[i]) != multiAttributes.count('correct'):
-                        del wordList[index]
-                        index -=1
-                    
-                    if attributeList[i] == 'absent' and letterList[i].lower() == wordList[index][i]:
-                        del wordList[index]
-                        index -=1
-                    
-                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                    if correctNumberOfMultiple(index, letterList, multiAttributes, i) and absentOrPresentMultiple(index, letterList, attributeList, i) and isCorrect(index, letterList, attributeList, i):
                         del wordList[index]
                         index -=1
 
@@ -172,15 +167,7 @@ def reduceWordList(letterList, attributeList, guessNumber):
             if 'present' in multiAttributes and 'correct' in multiAttributes and 'absent' not in multiAttributes:
                 index = 0
                 while(True):
-                    if wordList[index].count(letterList[i]) < (multiAttributes.count('correct') + multiAttributes.count('present')):
-                        del wordList[index]
-                        index -=1
-                    
-                    if attributeList[i] == 'present' and letterList[i].lower() == wordList[index][i]:
-                        del wordList[index]
-                        index -=1
-                    
-                    if attributeList[i] == 'correct' and letterList[i].lower() != wordList[index][i]:
+                    if wordList[index].count(letterList[i]) < (multiAttributes.count('correct') + multiAttributes.count('present')) and absentOrPresentMultiple(index, letterList, attributeList, i) and isCorrect(index, letterList, attributeList, i):
                         del wordList[index]
                         index -=1
 
