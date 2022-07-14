@@ -1,4 +1,4 @@
-# wordle
+# wordleBot
 Python bot that utilises Selenium to guess the daily Wordle puzzle.
 
 </img>
