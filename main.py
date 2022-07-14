@@ -57,7 +57,7 @@ class WordList:
         return False
 
     def less_than_number_multiple(self, index, letter_list, multi_attributes, i):
-        if (self.words[index].count(letter_list[i]) < (multi_attributes.count('correct') + multi_attributes.count('present'))):
+        if (self.words[index].count(letter_list[i].lower()) < (multi_attributes.count('correct') + multi_attributes.count('present'))):
             return True
         
         return False
@@ -216,7 +216,7 @@ class WordList:
                 if 'present' in multi_attributes and 'correct' in multi_attributes and 'absent' not in multi_attributes:
                     index = 0
                     while(True):
-                        if self.less_than_number_multiple(self, index, letter_list, multi_attributes, i) or self.absent_present_multiple(index, letter_list, attribute_list, i) or self.is_correct(index, letter_list, attribute_list, i):
+                        if self.less_than_number_multiple(index, letter_list, multi_attributes, i) or self.absent_present_multiple(index, letter_list, attribute_list, i) or self.is_correct(index, letter_list, attribute_list, i):
                             del self.words[index]
                             index -=1
 
