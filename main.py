@@ -40,11 +40,15 @@ class WordList:
         url = 'https://www.nytimes.com/games/wordle/index.html'
         self.driver.get(url)
 
-        time.sleep(1)
+        time.sleep(2)
 
         self.elem = self.driver.find_element(By.TAG_NAME, 'html')
 
-        self.elem.click()
+        self.close = self.driver.find_element(By.XPATH, f'/html/body/div/div/dialog/div/button')
+        
+        self.close.click()
+
+        time.sleep(1)
 
         self.word_guess()
 
@@ -108,8 +112,11 @@ class WordList:
         attribute_list = []
 
         for i in range(5):
-            letter = self.driver.find_element(By.XPATH, f'/html/body/div/div[1]/div/div[{self.guess_number}]/div[{i+1}]/div') 
-            attribute = self.driver.find_element(By.XPATH, f'/html/body/div/div[1]/div/div[{self.guess_number}]/div[{i+1}]/div').get_attribute("data-state")
+            #/html/body/div/div/div[2]/div/div[1]/div/div[1]/div[1]/div
+            #/html/body/div/div/div[2]/div/div[1]/div/div[1]/div[2]/div
+            #/html/body/div/div/div[2]/div/div[1]/div/div[2]/div[4]/div
+            letter = self.driver.find_element(By.XPATH, f'/html/body/div/div/div[2]/div/div[1]/div/div[{self.guess_number}]/div[{i+1}]/div') 
+            attribute = self.driver.find_element(By.XPATH, f'/html/body/div/div/div[2]/div/div[1]/div/div[{self.guess_number}]/div[{i+1}]/div').get_attribute("data-state")
 
             letter_list.append(letter.text)
             attribute_list.append(attribute)
