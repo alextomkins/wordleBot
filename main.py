@@ -1,6 +1,7 @@
 #-----Description----------------------------------------------------#
 #
-#  WORDLE BOT, Version 2 (12.07.2022)
+#  WORDLE BOT, Version 2 (21.11.2022)
+#  ChromeDriver 107.0.5304.62
 #
 #  This program provides an automated solution to solving the daily 
 #  wordle puzzle. The Google Chrome WebDriver is utilized to access
